@@ -69,7 +69,9 @@ cv2.waitKey(0)
 
 
 
-print(parameters) 
+print(parameters)
+
+print("") 
 
 
 
