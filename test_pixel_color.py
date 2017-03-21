@@ -50,10 +50,15 @@ dimm = max(parameters[1][0],parameters[1][1])
 new_bg = cv2.resize(bg, (int((int(b2) - int(b1))),int((int(a2) - int(a1)))), interpolation = cv2.INTER_LINEAR)
 
 
+final = cv2.resize(bg, (int(dimm * 1.2), int(dimm * 1.2)), interpolation = cv2.INTER_LINEAR) 
 
 
-new_bg = image[int(a1):int(a2), int(b1):int(b2)]   
 
+new_bg = image[int(a1):int(a2), int(b1):int(b2)]   #yoffset:yoffset + zz, xoffset: xoffset + zzz
+
+
+
+final[final.shape[0]: 
 
 cv2.imshow("original", image)
 cv2.waitKey(0)
