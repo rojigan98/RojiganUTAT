@@ -1,5 +1,5 @@
 '''Title: Master_Transform_Code.py  
-Author: Rojigan Gengatharan and whoever blessed that rotate_image code
+Author: Rojigan Gengatharan and the writer of the processImages.py code
 NOTES: Only works for images of 525 length and 519 width, these are the global 
 constants. Requires the file names in the list shown at the beginning of the code
 to be present and requires a "Background.png" file which is a image of 
@@ -22,7 +22,7 @@ ROTATION_AMOUNT = 12
 WIDTH = 525 
 HEIGHT = 519
 SCALE_FACTOR = 1.1
-
+DIMENSION = 42
 
 def compress_img(image, compression_amount):
     '''image is simply the opencv image file
@@ -147,6 +147,8 @@ for i in range(len(list_of_file_names)):
         for k in range(1, 5):
             
             new_new_img = compress_img(new_img, k)
+            new_new_img = cv2.resize(new_new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_LINEAR)
+
             a = str(i) + 'th_shape' + str(j*12) + 'rot' + str(k) + 'squish_.png'
             cv2.imwrite(a, new_new_img) 
     

@@ -83,8 +83,8 @@ cv2.imshow("new_new", new_new_bg)
 cv2.waitKey(0)
 
 new_new_bg[voff:voff + int(a2) - int(a1), hoff:hoff + int(b2) - int(b1)] = new_bg 
-
-cv2.imshow("new_new", new_new_bg)
+newb = cv2.resize(new_new_bg, (42,42), interpolation = cv2.INTER_LINEAR) 
+cv2.imshow("new_new", newb)
 cv2.waitKey(0)
 
 
