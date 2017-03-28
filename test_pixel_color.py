@@ -60,12 +60,14 @@ final = cv2.resize(bg, (int(dimm * SCALE_FACTOR), int(dimm * SCALE_FACTOR)), int
 new_bg = image[int(a1):int(a2), int(b1):int(b2)]   #yoffset:yoffset + zz, xoffset: xoffset + zzz
 
 
-new_new_bg = cv2.resize(bg, (int((int(b2) - int(b1)) * SCALE_FACTOR),int((int(a2) - int(a1)) * SCALE_FACTOR)), interpolation = cv2.INTER_LINEAR)
+final_dim = int(dimm * SCALE_FACTOR)
+
+new_new_bg = cv2.resize(bg, (final_dim,final_dim), interpolation = cv2.INTER_LINEAR)
 
 ## horizontal, vertical
 
-hdm = int((int(b2) - int(b1)) * SCALE_FACTOR)
-vdm = int((int(a2) - int(a1)) * SCALE_FACTOR)
+hdm = final_dim
+vdm = final_dim
 
 hoff = (hdm - (int(b2) - int(b1))) // 2
 voff = (vdm - (int(a2) - int(a1)))// 2

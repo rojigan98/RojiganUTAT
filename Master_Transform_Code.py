@@ -41,7 +41,9 @@ def compress_img(image, compression_amount):
     y_offset= HEIGHT // 2 - s_img.shape[0]//2
     l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1]] = s_img
     image = crop_image(l_img)
-    return image
+    
+    res = cv2.resize(image, (WIDTH, HEIGHT), interpolation = cv2.INTER_AREA) 
+    return res
     
     
     
@@ -68,23 +70,22 @@ def crop_image(image):
     
     new_bg = cv2.resize(bg, (int((int(b2) - int(b1))),int((int(a2) - int(a1)))), interpolation = cv2.INTER_LINEAR)
     
+    final_dim = int(dimm * SCALE_FACTOR)
     
-    final = cv2.resize(bg, (int(dimm * SCALE_FACTOR), int(dimm * SCALE_FACTOR)), interpolation = cv2.INTER_LINEAR) 
-    
+    final = cv2.resize(bg, (final_dim, final_dim), interpolation = cv2.INTER_LINEAR) 
     
     
     new_bg = image[int(a1):int(a2), int(b1):int(b2)]   #yoffset:yoffset + zz, xoffset: xoffset + zzz
     
     
-    new_new_bg = cv2.resize(bg, (int((int(b2) - int(b1)) * SCALE_FACTOR),int((int(a2) - int(a1)) * SCALE_FACTOR)), interpolation = cv2.INTER_LINEAR)
+    new_new_bg = cv2.resize(bg, (final_dim,final_dim), interpolation = cv2.INTER_LINEAR)
+
     
     ## horizontal, vertical
+
     
-    hdm = int((int(b2) - int(b1)) * SCALE_FACTOR)
-    vdm = int((int(a2) - int(a1)) * SCALE_FACTOR)
-    
-    hoff = (hdm - (int(b2) - int(b1))) // 2
-    voff = (vdm - (int(a2) - int(a1)))// 2
+    hoff = (final_dim - (int(b2) - int(b1))) // 2
+    voff = (final_dim - (int(a2) - int(a1)))// 2
     new_new_bg[voff:voff + int(a2) - int(a1), hoff:hoff + int(b2) - int(b1)] = new_bg 
     return new_new_bg 
     
@@ -108,6 +109,10 @@ def find_limiting_p(image):
                 
     return ((minC, maxC), (minR, maxR)), ((maxC - minC),(maxR -  minR)) 
     
+    
+
+
+
 def rotate_img(image, rot_amount):
     '''image is simply the opencv image file
     rotation_amount is how much you want the file to be rotated, For 
@@ -139,7 +144,7 @@ for i in range(len(list_of_file_names)):
         new_img = rotate_img(img, j*12)
         # new_imgs.extend(new_img)
         
-        for k in range(2, 5):
+        for k in range(1, 5):
             
             new_new_img = compress_img(new_img, k)
             a = str(i) + 'th_shape' + str(j*12) + 'rot' + str(k) + 'squish_.png'
