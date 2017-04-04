@@ -10,7 +10,7 @@ Also requires processImages.py with the rotate_image function'''
 
 
 
-##MAKE WIDE AND FAT SHAPEStt
+##MAKE WIDE SHAPES
 
 import numpy as np
 import cv2
@@ -124,41 +124,42 @@ def rotate_img(image, rot_amount):
     
     
     
-
-        
-list_of_file_names = ['Equilateral_Triangle.png', 'Isoceles_Right_Angle_Triangle.png']
-
-
-for i in range(len(list_of_file_names)):
+if __name__ == '__main__':
     
-    img = cv2.imread(list_of_file_names[i], cv2.IMREAD_COLOR)
-    newpath = list_of_file_names[i][:-4]  
-    background = cv2.imread("Background.png", cv2.IMREAD_COLOR)  
-    if not os.path.exists(newpath):
-        os.makedirs(newpath)
-    
-    os.chdir(newpath)
-    cv2.imwrite("Background.png", background) 
-    # new_imgs = [new_img]
-     
-    for j in range(1,31):
-        
-        new_img = rotate_img(img, j*12)
-        # new_imgs.extend(new_img)
-        
-        for k in range(1, 5):
             
-            new_new_img = compress_img(new_img, k)
-            new_new_img = cv2.resize(new_new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)
-
-            a = str(i) + 'th_shape' + str(j*12) + 'rot' + str(k) + 'squish_.png'
-            cv2.imwrite(a, new_new_img) 
-    
-
-    os.chdir('..')
-
-
-
+    list_of_file_names = ['Equilateral_Triangle.png', 'Isoceles_Right_Angle_Triangle.png']
     
     
+    for i in range(len(list_of_file_names)):
+        
+        img = cv2.imread(list_of_file_names[i], cv2.IMREAD_COLOR)
+        newpath = list_of_file_names[i][:-4]  
+        background = cv2.imread("Background.png", cv2.IMREAD_COLOR)  
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
+        
+        os.chdir(newpath)
+        cv2.imwrite("Background.png", background) 
+        # new_imgs = [new_img]
+        
+        for j in range(1,31):
+            
+            new_img = rotate_img(img, j*12)
+            # new_imgs.extend(new_img)
+            
+            for k in range(1, 5):
+                
+                new_new_img = compress_img(new_img, k)
+                new_new_img = cv2.resize(new_new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)
     
+                a = str(i) + 'th_shape' + str(j*12) + 'rot' + str(k) + 'squish_.png'
+                cv2.imwrite(a, new_new_img) 
+        
+    
+        os.chdir('..')
+    
+    
+    
+        
+        
+        
