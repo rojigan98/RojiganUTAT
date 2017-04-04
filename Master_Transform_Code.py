@@ -3,7 +3,7 @@ Author: Rojigan Gengatharan and the writer of the processImages.py code
 NOTES: Only works for images of 525 length and 519 width, these are the global 
 constants. Requires the file names in the list shown at the beginning of the code
 to be present and requires a "Background.png" file which is a image of 
-525 length and 519 width and colour is the same as the background of the images
+525 width and 519 height and colour is the same as the background of the images
 you are using. For example, A black background would mean Backgroud.png would
 have to be the colour black
 Also requires processImages.py with the rotate_image function'''
@@ -22,8 +22,9 @@ ROTATION_AMOUNT = 12
 WIDTH = 525 
 HEIGHT = 519
 SCALE_FACTOR = 1.1
-DIMENSION = 42
-
+DIMENSION = 40
+        
+                        
 def compress_img(image, compression_amount):
     '''image is simply the opencv image file
     compression_amount is how much you want the file to be compressed, For 
@@ -42,7 +43,7 @@ def compress_img(image, compression_amount):
     l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1]] = s_img
     image = crop_image(l_img)
     
-    res = cv2.resize(image, (WIDTH, HEIGHT), interpolation = cv2.INTER_AREA) 
+    res = cv2.resize(image, (WIDTH, HEIGHT), interpolation = cv2.INTER_LINEAR) 
     return res
     
     
@@ -68,7 +69,7 @@ def crop_image(image):
     
     
     
-    new_bg = cv2.resize(bg, (int((int(b2) - int(b1))),int((int(a2) - int(a1)))), interpolation = cv2.INTER_LINEAR)
+    new_bg = cv2.resize(bg, (int((int(b2) - int(b1))),int((int(a2) - int(a1)))), interpolation = cv2.INTER_AREA)
     
     final_dim = int(dimm * SCALE_FACTOR)
     
@@ -124,7 +125,7 @@ def rotate_img(image, rot_amount):
     
     
 
-
+        
 list_of_file_names = ['Equilateral_Triangle.png', 'Isoceles_Right_Angle_Triangle.png']
 
 
@@ -141,13 +142,14 @@ for i in range(len(list_of_file_names)):
     # new_imgs = [new_img]
      
     for j in range(1,31):
+        
         new_img = rotate_img(img, j*12)
         # new_imgs.extend(new_img)
         
         for k in range(1, 5):
             
             new_new_img = compress_img(new_img, k)
-            new_new_img = cv2.resize(new_new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_LINEAR)
+            new_new_img = cv2.resize(new_new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)
 
             a = str(i) + 'th_shape' + str(j*12) + 'rot' + str(k) + 'squish_.png'
             cv2.imwrite(a, new_new_img) 
