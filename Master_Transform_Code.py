@@ -9,8 +9,8 @@ have to be the colour black
 Also requires processImages.py with the rotate_image function'''
 
 
-
-##MAKE WIDE SHAPES
+##CAN UPLOAD MY FILES TO THE GOOGLE DRIVE
+#MAKE WIDE SHAPES
 
 import numpy as np
 import cv2

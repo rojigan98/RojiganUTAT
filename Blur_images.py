@@ -2,6 +2,7 @@ import cv2
 import random
 import Master_Transform_Code
 '''blurs 42 x 42 images '''
+#NEED TO UPDATE THIS FUNCTION
 def addnoise(img):
     img_m = Master_Transform_Code.crop_image(img)
     img_m = cv2.resize(img_m,(42,42),0)
@@ -19,12 +20,12 @@ def addnoise(img):
      for j in range(0, noise.shape[1]):
         blur[i,j] = blur[i,j] * noise[i,j]
     
-    new = img_m + noise + blur
+    new = blur + img_m
     
     
     
     
-   # threshold(new)
+    threshold(new)
     cv2.imwrite('blurred.png',new)
     return new
     
