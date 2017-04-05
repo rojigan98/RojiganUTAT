@@ -1,6 +1,7 @@
 import cv2
 import random
 import Master_Transform_Code
+'''blurs 42 x 42 images '''
 def addnoise(img):
     img_m = Master_Transform_Code.crop_image(img)
     img_m = cv2.resize(img_m,(42,42),0)
@@ -23,14 +24,18 @@ def addnoise(img):
     
     
     
-    threshold(new)
+   # threshold(new)
     cv2.imwrite('blurred.png',new)
     return new
     
 ''' Turns greys into blacks '''
 def threshold(image):
-    
-    
+    for i in range(0, image.shape[0]):
+        for j in range(0, image.shape[1]):
+            if (image[i,j][0] != 0 and image[i,j][0] != 255):
+                for x in range(3): 
+                    (image[i,j])[x] = 255
+    return
     
 '''puts random white spots on the background.png'''
 def make_random_white(image):
@@ -43,14 +48,14 @@ def make_random_white(image):
                 
                 
     return
-    
-    
-                
-                
-                
+
+
+
+
+
             
                 
-
+        
 if __name__ == '__main__':
     
     
