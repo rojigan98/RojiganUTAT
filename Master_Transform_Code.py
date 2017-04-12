@@ -11,6 +11,9 @@ Also requires processImages.py with the rotate_image function'''
 
 ##CAN UPLOAD MY FILES TO THE GOOGLE DRIVE
 #MAKE WIDE SHAPES
+##DONT FORGET TO THRESHOLD IMAGES AT THE END AND CONVERT TO GRAYSCALE
+##PUT ALL IMAGES AS A BIG MATRIX IN ONE VECTOR
+##DONT FORGET ABOUT DILATING IMAGES
 
 import numpy as np
 import cv2
@@ -67,9 +70,12 @@ def crop_image(image):
     
     dimm = max(parameters[1][0],parameters[1][1])
     
+    #next line for debugging purposes only
+    
     
     
     new_bg = cv2.resize(bg, (int((int(b2) - int(b1))),int((int(a2) - int(a1)))), interpolation = cv2.INTER_AREA)
+   
     
     final_dim = int(dimm * SCALE_FACTOR)
     
@@ -91,12 +97,12 @@ def crop_image(image):
     return new_new_bg 
     
 def find_limiting_p(image):
-    minC = WIDTH - 1
-    minR = HEIGHT - 1
+    minC = image.shape[1] - 1
+    minR = image.shape[0] - 1
     maxC = 0
     maxR = 0
-    for i in range(0, HEIGHT):
-        for j in range(0, WIDTH):
+    for i in range(0, image.shape[0]):
+        for j in range(0, image.shape[1]):
             if (image[i,j])[1] == 0:
                 continue
             if i < minR:

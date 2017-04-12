@@ -1,18 +1,25 @@
 import cv2
 import random
 import Master_Transform_Code
-'''blurs 42 x 42 images '''
+'''blurs 40 x 40 images '''
 #NEED TO UPDATE THIS FUNCTION
-def addnoise(img):
-    img_m = Master_Transform_Code.crop_image(img)
-    img_m = cv2.resize(img_m,(42,42),0)
-    blur = cv2.GaussianBlur(img_m,(5,5),0)
+#USE CIRCULAR DILATE
+#AND ADD SPACE ON THE SIDES SO THAT THE DILATE DOESNT GET CUT OFF 
+'''input image is assumed to already be cropped and of proper size'''
+def addnoise(image):
+
+    #img_m = Master_Transform_Code.crop_image(img)
+    #img_m = cv2.resize(img_m,(42,42),0)
+    #Blur is to get gray pixels
+    blur = cv2.GaussianBlur(image,(5,5),0)
     
     #cv2.resize(img, (42,42), interpolation = cv2.INTER_AREA)
-    blur = cv2.resize(blur, (img_m.shape[1],img_m.shape[0]), interpolation = cv2.INTER_AREA)
+    #blur = cv2.resize(blur, (img_m.shape[1],img_m.shape[0]), interpolation = cv2.INTER_AREA)
     
-    noise = cv2.imread("Background.png")
+    noise = cv2.imread("Background.png", cv2.IMREAD_COLOR)
     noise = cv2.resize(noise, (blur.shape[1],blur.shape[0]), interpolation = cv2.INTER_AREA)
+    
+    #noise = Master_Transform_Code.crop_image(noise)
     
     make_random_white(noise)
     
@@ -20,13 +27,22 @@ def addnoise(img):
      for j in range(0, noise.shape[1]):
         blur[i,j] = blur[i,j] * noise[i,j]
     
-    new = blur + img_m
     
+    #NEED TO DILATE HERE
+    #new = blur + img_m
+    
+    new = blur + image
     
     
     
     threshold(new)
-    cv2.imwrite('blurred.png',new)
+    cv2.imshow('before dilation',new)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    new = Master_Transform_Code.crop_image(new)
+    cv2.imwrite('before_dilation.png', new)
+    new = cv2.dilate(new,(3,3),iterations = 1)
+    cv2.imwrite('after_dilation.png',new)
     return new
     
 ''' Turns greys into blacks '''
@@ -45,8 +61,10 @@ def make_random_white(image):
         for j in range(0, image.shape[1]):            
             x = random.randint(0, 1)
             if (x == 0):
-                image[i,j] = random.randint(0,1)
-                
+                #image[i,j] = random.randint(0,1)
+                a = random.randint(0,1)
+                for k in range(3):
+                    image[i,j][k] = a
                 
     return
 
@@ -61,10 +79,15 @@ if __name__ == '__main__':
     
     
     image = cv2.imread("Equilateral_Triangle.png", cv2.IMREAD_COLOR)
+    image = Master_Transform_Code.crop_image(image)
+    image = cv2.resize(image,(40,40),0)
+    
     cv2.imshow('image',image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    image = addnoise(image)
-    cv2.imshow('new_image',image)
+    
+    image1 = addnoise(image)
+    
+    cv2.imshow('after dilation',image1)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
