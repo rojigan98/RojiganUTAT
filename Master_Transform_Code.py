@@ -44,7 +44,7 @@ def compress_img(image, compression_amount):
     x_offset= WIDTH// 2 - s_img.shape[1]//2
     y_offset= HEIGHT // 2 - s_img.shape[0]//2
     l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1]] = s_img
-    image = crop_image(l_img)
+    image = crop_image(l_img, SCALE_FACTOR)
     
     res = cv2.resize(image, (WIDTH, HEIGHT), interpolation = cv2.INTER_LINEAR) 
     return res
@@ -52,7 +52,7 @@ def compress_img(image, compression_amount):
     
     
     
-def crop_image(image):
+def crop_image(image,sf):
     '''Crops image to a constant scale factor, i.e the shape will take up 1/scale_factor X 100% of the final image'''
     l_img = cv2.imread("Background.png", cv2.IMREAD_COLOR)
     s_img = image
@@ -77,7 +77,7 @@ def crop_image(image):
     new_bg = cv2.resize(bg, (int((int(b2) - int(b1))),int((int(a2) - int(a1)))), interpolation = cv2.INTER_AREA)
    
     
-    final_dim = int(dimm * SCALE_FACTOR)
+    final_dim = int(dimm * sf)
     
     final = cv2.resize(bg, (final_dim, final_dim), interpolation = cv2.INTER_LINEAR) 
     

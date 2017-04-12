@@ -5,19 +5,21 @@ import Master_Transform_Code
 #NEED TO UPDATE THIS FUNCTION
 #USE CIRCULAR DILATE
 #AND ADD SPACE ON THE SIDES SO THAT THE DILATE DOESNT GET CUT OFF 
+#DONT FORGET TO THRESHOLD IMAGES AT THE END
 '''input image is assumed to already be cropped and of proper size'''
 def addnoise(image):
 
     #img_m = Master_Transform_Code.crop_image(img)
     #img_m = cv2.resize(img_m,(42,42),0)
     #Blur is to get gray pixels
+    image = Master_Transform_Code.crop_image(image,1.2)
     blur = cv2.GaussianBlur(image,(5,5),0)
     
     #cv2.resize(img, (42,42), interpolation = cv2.INTER_AREA)
     #blur = cv2.resize(blur, (img_m.shape[1],img_m.shape[0]), interpolation = cv2.INTER_AREA)
     
     noise = cv2.imread("Background.png", cv2.IMREAD_COLOR)
-    noise = cv2.resize(noise, (blur.shape[1],blur.shape[0]), interpolation = cv2.INTER_AREA)
+    noise = cv2.resize(noise, (int(blur.shape[1]) ,int (blur.shape[0])), interpolation = cv2.INTER_AREA)
     
     #noise = Master_Transform_Code.crop_image(noise)
     
@@ -39,7 +41,8 @@ def addnoise(image):
     cv2.imshow('before dilation',new)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    new = Master_Transform_Code.crop_image(new)
+    #if i use scale_factor of 1.1 then resize to 40 x 40 then the noise gets cut off, if i use scale factor of 1.2 then resize to 40 x 40 then the triangle will appear a bit smaller
+    new = Master_Transform_Code.crop_image(new,1.1)
     cv2.imwrite('before_dilation.png', new)
     new = cv2.dilate(new,(3,3),iterations = 1)
     cv2.imwrite('after_dilation.png',new)
@@ -79,7 +82,7 @@ if __name__ == '__main__':
     
     
     image = cv2.imread("Equilateral_Triangle.png", cv2.IMREAD_COLOR)
-    image = Master_Transform_Code.crop_image(image)
+    image = Master_Transform_Code.crop_image(image,1.2)
     image = cv2.resize(image,(40,40),0)
     
     cv2.imshow('image',image)
