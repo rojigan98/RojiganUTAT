@@ -2,11 +2,13 @@ import cv2
 import random
 import Master_Transform_Code
 '''blurs 40 x 40 images '''
+#TENSORFLOW
 #NEED TO UPDATE THIS FUNCTION
 #USE CIRCULAR DILATE
 #AND ADD SPACE ON THE SIDES SO THAT THE DILATE DOESNT GET CUT OFF
 #DONT FORGET TO THRESHOLD IMAGES AT THE END
 #Dilate more - Davis
+#one blur, one more blur,one no blur  (2 degress of blur or 2 degrees of dilate
 '''input image is assumed to already be cropped and of proper size'''
 def addnoise(image):
 
