@@ -53,12 +53,13 @@ def addnoise(image):
     cv2.destroyAllWindows()
     #if i use scale_factor of 1.1 then resize to 40 x 40 then the noise gets cut off, if i use scale factor of 1.2 then resize to 40 x 40 then the triangle will appear a bit smaller
     cv2.imwrite('before_dilation.png', new)
-    new = cv2.dilate(new,circular_Kernel,iterations = 1)
+    rip = cv2.dilate(new,circular_Kernel,iterations = 1)
     
-    rez = Master_Transform_Code.crop_image(new, 1.2)
+    rez = Master_Transform_Code.crop_image(rip, 1.2)
     rez = cv2.resize(rez, (40,40), interpolation = cv2.INTER_AREA)
-    cv2.imwrite('after_dilation.png',rez)
     threshold(rez)
+    cv2.imwrite('after_dilation.png',rez)
+    
     return rez
 
 ''' Turns greys into blacks '''
