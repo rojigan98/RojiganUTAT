@@ -12,17 +12,18 @@ def addnoise(image):
 
 
 
-    circular_Kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
+    circular_Kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7))
 
     #High scale factor is to make sure none of the noise is cropped out
-    image = Master_Transform_Code.crop_image(image,1.5)
-
+    image = Master_Transform_Code.crop_image(image,1.4)
+    cv2.imshow("2", image)
+    cv2.waitKey(0)
     #Blur is to get gray pixels
     #See what happens if you use rectangular kernel here and circular kernel elsewhere
     #GaussianBlur vs Blur? Blur replaces all the pixels of a kernel with the average value of that kernel
     #This creates grey pixels near the edges of the shape, (Also in the shape, but these will be addressed later)
     blur = cv2.GaussianBlur(image,(5,5),0)
-
+    #(5,5) was used originallzy and it was cv2.GaussianBlur(image,(5,5),0)
 
     #Creating the noise like this is satisfactory, for now at least
     noise = cv2.imread("Background.png", cv2.IMREAD_COLOR)
@@ -51,11 +52,14 @@ def addnoise(image):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     #if i use scale_factor of 1.1 then resize to 40 x 40 then the noise gets cut off, if i use scale factor of 1.2 then resize to 40 x 40 then the triangle will appear a bit smaller
-    new = Master_Transform_Code.crop_image(new,1.2)
     cv2.imwrite('before_dilation.png', new)
     new = cv2.dilate(new,circular_Kernel,iterations = 1)
-    cv2.imwrite('after_dilation.png',new)
-    return new
+    
+    rez = Master_Transform_Code.crop_image(new, 1.2)
+    rez = cv2.resize(rez, (40,40), interpolation = cv2.INTER_AREA)
+    cv2.imwrite('after_dilation.png',rez)
+    threshold(rez)
+    return rez
 
 ''' Turns greys into blacks '''
 def threshold(image):
@@ -76,7 +80,7 @@ def make_random_white(image):
                 #image[i,j] = random.randint(0,1)
                 a = random.randint(0,1)
                 for k in range(3):
-                    image[i,j][k] = a
+                    image[i,j][k] = a * 255
 
     return
 

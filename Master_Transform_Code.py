@@ -73,16 +73,16 @@ def crop_image(image,sf):
     #next line for debugging purposes only
 
 
-
-    new_bg = cv2.resize(bg, (int((int(b2) - int(b1))),int((int(a2) - int(a1)))), interpolation = cv2.INTER_AREA)
+    #+ 1 wasn't here originally
+    new_bg = cv2.resize(bg, ((int(b2) - int(b1)  + 1),(int(a2) - int(a1)  + 1)), interpolation = cv2.INTER_AREA)
 
 
     final_dim = int(dimm * sf)
 
     final = cv2.resize(bg, (final_dim, final_dim), interpolation = cv2.INTER_LINEAR)
 
-
-    new_bg = image[int(a1):int(a2), int(b1):int(b2)]   #yoffset:yoffset + zz, xoffset: xoffset + zzz
+    #+ 1 wasn't here originally
+    new_bg = image[int(a1):int(a2) + 1, int(b1):int(b2) + 1]   #yoffset:yoffset + zz, xoffset: xoffset + zzz
 
 
     new_new_bg = cv2.resize(bg, (final_dim,final_dim), interpolation = cv2.INTER_LINEAR)
@@ -93,11 +93,12 @@ def crop_image(image,sf):
 
     hoff = (final_dim - (int(b2) - int(b1))) // 2
     voff = (final_dim - (int(a2) - int(a1)))// 2
-    new_new_bg[voff:voff + int(a2) - int(a1), hoff:hoff + int(b2) - int(b1)] = new_bg
+    #+ 1 wasn't here originally
+    new_new_bg[voff:voff + int(a2) - int(a1) + 1, hoff:hoff + int(b2) - int(b1) + 1] = new_bg
     return new_new_bg
 
 def find_limiting_p(image):
-    minC = image.shape[1] - 1
+    minC = image.shape[1] - 1 
     minR = image.shape[0] - 1
     maxC = 0
     maxR = 0
