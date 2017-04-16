@@ -10,16 +10,16 @@ import Master_Transform_Code
 #Dilate more - Davis
 #one blur, one more blur,one no blur  (2 degress of blur or 2 degrees of dilate
 '''input image is assumed to already be cropped and of proper size'''
-def addnoise(image):
+def addnoise(image,kernel):
 
 
 
-    circular_Kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7))
-
+    circular_Kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, kernel)
     #High scale factor is to make sure none of the noise is cropped out
-    image = Master_Transform_Code.crop_image(image,1.4)
-    cv2.imshow("2", image)
-    cv2.waitKey(0)
+    image = Master_Transform_Code.crop_image(image,1.45)
+    image = cv2.resize(image,(40,40),interpolation = cv2.INTER_AREA)
+
+
     #Blur is to get gray pixels
     #See what happens if you use rectangular kernel here and circular kernel elsewhere
     #GaussianBlur vs Blur? Blur replaces all the pixels of a kernel with the average value of that kernel
@@ -55,10 +55,9 @@ def addnoise(image):
     cv2.destroyAllWindows()
     #if i use scale_factor of 1.1 then resize to 40 x 40 then the noise gets cut off, if i use scale factor of 1.2 then resize to 40 x 40 then the triangle will appear a bit smaller
     cv2.imwrite('before_dilation.png', new)
-    rip = cv2.dilate(new,circular_Kernel,iterations = 1)
-    
-    rez = Master_Transform_Code.crop_image(rip, 1.2)
-    rez = cv2.resize(rez, (40,40), interpolation = cv2.INTER_AREA)
+    rez = cv2.dilate(new,circular_Kernel,iterations = 1)
+
+    print(rez.shape)
     threshold(rez)
     cv2.imwrite('after_dilation.png',rez)
     
@@ -105,9 +104,9 @@ if __name__ == '__main__':
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-    image1 = addnoise(image)
+    image1 = addnoise(image, (3,3))
 
-    cv2.imshow('after dilation',image1)
+    cv2.imshow('after dilation degree 1',image1)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
@@ -116,3 +115,10 @@ if __name__ == '__main__':
     cv2.imwrite("normal_image.png", imgg)
 
     cv2.imwrite("blurred_image.png", image1)
+    
+    image2 = addnoise(image, (7,7))
+    cv2.imshow('after dilation degree 2', image2)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows() 
+    
+    cv2.imwrite("more_blurred_image.png", image2)

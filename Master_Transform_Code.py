@@ -14,18 +14,100 @@ Also requires processImages.py with the rotate_image function'''
 ##DONT FORGET TO THRESHOLD IMAGES AT THE END AND CONVERT TO GRAYSCALE, i.e. black and white
 ##PUT ALL IMAGES AS A BIG MATRIX IN ONE VECTOR
 ##DONT FORGET ABOUT DILATING IMAGES
+##DONT FORGET TO ADD TWO DEGREES OF BLUR HERE
 
 import numpy as np
 import cv2
 import processImages
 import os
+
+
 ROTATION_AMOUNT = 12
-#LENGTH = 525
-#WIDTH = 519
 WIDTH = 525
 HEIGHT = 519
 SCALE_FACTOR = 1.1
 DIMENSION = 40
+
+
+'''input image is assumed to already be cropped and of proper size'''
+def addnoise(image,kernel):
+
+
+
+    circular_Kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, kernel)
+    #High scale factor is to make sure none of the noise is cropped out
+    image = Master_Transform_Code.crop_image(image,1.45)
+    image = cv2.resize(image,(40,40),interpolation = cv2.INTER_AREA)
+
+
+    #Blur is to get gray pixels
+    #See what happens if you use rectangular kernel here and circular kernel elsewhere
+    #GaussianBlur vs Blur? Blur replaces all the pixels of a kernel with the average value of that kernel
+    #This creates grey pixels near the edges of the shape, (Also in the shape, but these will be addressed later)
+    blur = cv2.GaussianBlur(image,(5,5),0)
+    #(5,5) was used originallzy and it was cv2.GaussianBlur(image,(5,5),0)
+
+    #Creating the noise like this is satisfactory, for now at least
+    noise = cv2.imread("Background.png", cv2.IMREAD_COLOR)
+    noise = cv2.resize(noise, (int(blur.shape[1]) ,int (blur.shape[0])), interpolation = cv2.INTER_AREA)
+    make_random_white(noise)
+
+    #blur = blur*noise, this line makes it so that all black pixels will stay black and only the gray pixels 
+    #will be affected, i.e. some of the gray pixels will become black due to the random noise, will be addressed in next
+    #section of code
+
+    for i in range(0, noise.shape[0]):
+        for j in range(0, noise.shape[1]):
+            blur[i,j] = blur[i,j] * noise[i,j]
+
+
+
+    #Add the modified blur to the original image, grey + white = white, grey + black = grey, black + white = white
+    new = cv2.add(blur,image)
+    #new = blur + image <-- original line
+
+
+    #need to make all greys white
+    threshold(new)
+
+    cv2.imshow('before dilation',new)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    #if i use scale_factor of 1.1 then resize to 40 x 40 then the noise gets cut off, if i use scale factor of 1.2 then resize to 40 x 40 then the triangle will appear a bit smaller
+    cv2.imwrite('before_dilation.png', new)
+    rez = cv2.dilate(new,circular_Kernel,iterations = 1)
+
+    print(rez.shape)
+    threshold(rez)
+    cv2.imwrite('after_dilation.png',rez)
+    
+    return rez
+
+''' Turns greys into blacks '''
+def threshold(image):
+    for i in range(0, image.shape[0]):
+        for j in range(0, image.shape[1]):
+            if (image[i,j][0] != 0 and image[i,j][0] != 255):
+                for x in range(3):
+                    (image[i,j])[x] = 255
+    return
+
+'''puts random white spots on the background.png'''
+def make_random_white(image):
+
+    for i in range(0, image.shape[0]):
+        for j in range(0, image.shape[1]):
+            x = random.randint(0, 1)
+            if (x == 0):
+                #image[i,j] = random.randint(0,1)
+                a = random.randint(0,1)
+                for k in range(3):
+                    image[i,j][k] = a * 255
+
+    return
+
+
+
 
 
 def compress_img(image, compression_amount):
@@ -148,7 +230,7 @@ if __name__ == '__main__':
         os.chdir(newpath)
         cv2.imwrite("Background.png", background)
         # new_imgs = [new_img]
-
+        #compress first and then rotate, because of circle
         for j in range(1,31):
 
             new_img = rotate_img(img, j*12)
