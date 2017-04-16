@@ -20,14 +20,15 @@ import numpy as np
 import cv2
 import processImages
 import os
-
+import random
 
 ROTATION_AMOUNT = 12
 WIDTH = 525
 HEIGHT = 519
 SCALE_FACTOR = 1.1
 DIMENSION = 40
-
+KERNEL_0 = (3,3)
+KERNEL_1 = (5,5)
 
 '''input image is assumed to already be cropped and of proper size'''
 def addnoise(image,kernel):
@@ -36,7 +37,7 @@ def addnoise(image,kernel):
 
     circular_Kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, kernel)
     #High scale factor is to make sure none of the noise is cropped out
-    image = Master_Transform_Code.crop_image(image,1.45)
+    image = crop_image(image,1.45)
     image = cv2.resize(image,(40,40),interpolation = cv2.INTER_AREA)
 
 
@@ -44,7 +45,7 @@ def addnoise(image,kernel):
     #See what happens if you use rectangular kernel here and circular kernel elsewhere
     #GaussianBlur vs Blur? Blur replaces all the pixels of a kernel with the average value of that kernel
     #This creates grey pixels near the edges of the shape, (Also in the shape, but these will be addressed later)
-    blur = cv2.GaussianBlur(image,(5,5),0)
+    blur = cv2.GaussianBlur(image,(3,3),0)
     #(5,5) was used originallzy and it was cv2.GaussianBlur(image,(5,5),0)
 
     #Creating the noise like this is satisfactory, for now at least
@@ -70,16 +71,12 @@ def addnoise(image,kernel):
     #need to make all greys white
     threshold(new)
 
-    cv2.imshow('before dilation',new)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    
     #if i use scale_factor of 1.1 then resize to 40 x 40 then the noise gets cut off, if i use scale factor of 1.2 then resize to 40 x 40 then the triangle will appear a bit smaller
-    cv2.imwrite('before_dilation.png', new)
     rez = cv2.dilate(new,circular_Kernel,iterations = 1)
 
-    print(rez.shape)
     threshold(rez)
-    cv2.imwrite('after_dilation.png',rez)
+
     
     return rez
 
@@ -216,7 +213,7 @@ def rotate_img(image, rot_amount):
 if __name__ == '__main__':
 
 
-    list_of_file_names = ['Equilateral_Triangle.png', 'Isoceles_Right_Angle_Triangle.png']
+    list_of_file_names = ['0.png', '1.png']
 
 
     for i in range(len(list_of_file_names)):
@@ -230,19 +227,27 @@ if __name__ == '__main__':
         os.chdir(newpath)
         cv2.imwrite("Background.png", background)
         # new_imgs = [new_img]
-        #compress first and then rotate, because of circle
-        for j in range(1,31):
-
-            new_img = rotate_img(img, j*12)
+        #compress first and then rotate, because of circle, and hexagon
+        for k in range(1,4):
+            new_img = compress_img(img, k)
+            new_img = cv2.resize(new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)     
+            new_img = crop_image(new_img, SCALE_FACTOR)       
             # new_imgs.extend(new_img)
 
-            for k in range(1, 5):
+            for j in range(1, 31):
+                
+                new_new_img = rotate_img(new_img, j*12)
+                new_new_img = crop_image(new_new_img, SCALE_FACTOR)
+                new_new_img = cv2.resize(new_new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)     
+                for l in range(0,3):
+                    if (l == 1):
+                        new_new_img = addnoise(new_new_img, KERNEL_0)
+                    elif (l == 2):
+                        new_new_img = addnoise(new_new_img, KERNEL_1)
+                    
+                    threshold(new_new_img) 
+                    a = str(i) + 'th_shape' + str(j*12) + 'rot_' + str(k) + 'squish' + str(l) + 'blur.png'
+                    cv2.imwrite(a, new_new_img)
 
-                new_new_img = compress_img(new_img, k)
-                new_new_img = cv2.resize(new_new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)
-
-                a = str(i) + 'th_shape' + str(j*12) + 'rot' + str(k) + 'squish_.png'
-                cv2.imwrite(a, new_new_img)
-
-
+                
         os.chdir('..')
