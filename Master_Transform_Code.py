@@ -30,6 +30,9 @@ DIMENSION = 40
 KERNEL_0 = (3,3)
 KERNEL_1 = (5,5)
 
+NUMCLASSES = 11
+NUMUNIQUE = 3
+
 '''input image is assumed to already be cropped and of proper size'''
 def addnoise(image,kernel):
 
@@ -211,45 +214,52 @@ def rotate_img(image, rot_amount):
 
 
 if __name__ == '__main__':
+    print(NUMCLASSES)
 
-
-    list_of_file_names = ['0.png', '1.png']
-
-
-    for i in range(len(list_of_file_names)):
-
-        img = cv2.imread(list_of_file_names[i], cv2.IMREAD_COLOR)
-        newpath = list_of_file_names[i][:-4]
-        background = cv2.imread("Background.png", cv2.IMREAD_COLOR)
-        if not os.path.exists(newpath):
-            os.makedirs(newpath)
-
-        os.chdir(newpath)
-        cv2.imwrite("Background.png", background)
-        res = [] 
-        # new_imgs = [new_img]
-        #compress first and then rotate, because of circle, and hexagon
-        for k in range(1,4):
-            new_img = compress_img(img, k)
-            new_img = cv2.resize(new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)     
-            new_img = crop_image(new_img, SCALE_FACTOR)       
-            # new_imgs.extend(new_img)
-
-            for j in range(1, 31):
-                
-                new_new_img = rotate_img(new_img, j*12)
-                new_new_img = crop_image(new_new_img, SCALE_FACTOR)
-                new_new_img = cv2.resize(new_new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)     
-                for l in range(0,3):
-                    if (l == 1):
-                        new_new_img = addnoise(new_new_img, KERNEL_0)
-                    elif (l == 2):
-                        new_new_img = addnoise(new_new_img, KERNEL_1)
+    res = [] 
+    #NUMCLASSES + 1
+    for i in range(NUMCLASSES + 1):
+        for p in range(NUMUNIQUE + 1):
+            img = cv2.imread(str(i) + '_' + str(p) + '.png', cv2.IMREAD_COLOR)
+            final = img
+            newpath = str(i) + '_' + str(p) + "kendrick"
+            background = cv2.imread("Background.png", cv2.IMREAD_COLOR)
+            if not os.path.exists(newpath):
+                os.makedirs(newpath)
+    
+            os.chdir(newpath)
+            cv2.imwrite("Background.png", background)
+            
+            # new_imgs = [new_img]
+            #compress first and then rotate, because of circle, and hexagon
+            for k in range(1,4):
+                new_img = compress_img(img, k)
+                new_img = cv2.resize(new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)     
+                new_img = crop_image(new_img, SCALE_FACTOR)       
+                # new_imgs.extend(new_img)
+    
+                for j in range(1, 31):
                     
-                    cv2.cvtColor(new_new_img, final, CV_BGR2GRAY)
-                    threshold(final)
-                    a = str(i) + 'th_shape' + str(j*12) + 'rot_' + str(k) + 'squish' + str(l) + 'blur.png'
-                    cv2.imwrite(a, final)
-
-                
-        os.chdir('..')
+                    new_new_img = rotate_img(new_img, j*12)
+                    new_new_img = crop_image(new_new_img, SCALE_FACTOR)
+                    new_new_img = cv2.resize(new_new_img, (DIMENSION,DIMENSION), interpolation = cv2.INTER_AREA)     
+                    for l in range(0,3):
+                        if (l == 1):
+                            new_new_img = addnoise(new_new_img, KERNEL_0)
+                        elif (l == 2):
+                            new_new_img = addnoise(new_new_img, KERNEL_1)
+                        
+                        final = cv2.cvtColor(new_new_img, cv2.COLOR_BGR2GRAY)
+                        final_f = final.flatten
+                        
+                        res.append(final_f)
+                        # a = str(i) + '_' + str(p) 'shape' + str(j*12) + 'rot_' + str(k) + 'squish' + str(l) + 'blur.png'
+                        # 
+                        # 
+                        # 
+                        # cv2.imwrite(a, final)
+            os.chdir('..')
+                    
+    
+    np.save('roji_training_images.npy', res)
+            #np.savetxt('roji_training_images.txt', res)
