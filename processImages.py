@@ -66,7 +66,15 @@ def rotate_image(image, angle):
     w = right - left
 
     cropped = np.zeros((w, h, 3), dtype='uint8')
-    cropped[:, :, :] = dst_image[left:(left+w), up:(up+h), :]
+    #rip his code, put an if here to account for the error
+    if (up >= 0 and left >= 0):
+        cropped[:, :, :] = dst_image[left:(left+w), up:(up+h), :]
+    elif (up < 0 and left >= 0):
+        cropped[:,:,:] = dst_image[left:(left + w), 0:h, :]
+    elif (left < 0 and up >= 0):
+        cropped[:,:,:] = dst_image[0:w, up:(up + h), :]
+    else:
+        cropped[:,:,:] = dst_image[0:w,0:h,:]
     return cropped
     
 def getRotationsPlusMinus(angle, image):

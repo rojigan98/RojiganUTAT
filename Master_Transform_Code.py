@@ -1,7 +1,7 @@
 '''Title: Master_Transform_Code.py
 Author: Rojigan Gengatharan and the writer of the processImages.py code
 NOTES: Only works for images of 525 length and 519 width, these are the global
-constants. Requires the file names in the list shown at the beginning of the code
+constants. Requires the file names in the list shown at the beginning of the code, refer to base images folder 
 to be present and requires a "Background.png" file which is a image of
 525 width and 519 height and colour is the same as the background of the images
 you are using. For example, A black background would mean Backgroud.png would
@@ -30,6 +30,7 @@ DIMENSION = 40
 KERNEL_0 = (3,3)
 KERNEL_1 = (5,5)
 
+#classes from 0 to 11, 0, 1, 2, ... 11
 NUMCLASSES = 11
 NUMUNIQUE = 3
 
@@ -215,8 +216,12 @@ def rotate_img(image, rot_amount):
 
 if __name__ == '__main__':
     print(NUMCLASSES)
-
-    res = [] 
+    count = 0 
+    res = np.empty([(NUMCLASSES + 1) * (NUMUNIQUE + 1) * 3 * 30 * 3,DIMENSION**2])
+  
+    res_labels = np.empty([(NUMCLASSES + 1) * (NUMUNIQUE + 1) * 3 * 30 * 3,(NUMCLASSES + 1)])
+    
+    p_labels = np.identity(NUMCLASSES + 1)
     #NUMCLASSES + 1
     for i in range(NUMCLASSES + 1):
         #NUMUNIQUE + 1
@@ -253,7 +258,9 @@ if __name__ == '__main__':
                         final = cv2.cvtColor(new_new_img, cv2.COLOR_BGR2GRAY)
                         final_f = final.flatten()
                         
-                        res.append(final_f)
+                        res[count] = final_f
+                        res_labels[count] = p_labels[i]
+                        count = count + 1
                         # a = str(i) + '_' + str(p) 'shape' + str(j*12) + 'rot_' + str(k) + 'squish' + str(l) + 'blur.png'
                         # 
                         # 
@@ -263,4 +270,5 @@ if __name__ == '__main__':
                     
     
     np.save('roji_training_images.npy', res)
+    np.save('roji_traning_images_labels.npy', res_labels)
             #np.savetxt('roji_training_images.txt', res)
