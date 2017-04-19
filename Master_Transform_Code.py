@@ -226,6 +226,7 @@ if __name__ == '__main__':
 
         os.chdir(newpath)
         cv2.imwrite("Background.png", background)
+        res = [] 
         # new_imgs = [new_img]
         #compress first and then rotate, because of circle, and hexagon
         for k in range(1,4):
@@ -245,9 +246,10 @@ if __name__ == '__main__':
                     elif (l == 2):
                         new_new_img = addnoise(new_new_img, KERNEL_1)
                     
-                    threshold(new_new_img) 
+                    cv2.cvtColor(new_new_img, final, CV_BGR2GRAY)
+                    threshold(final)
                     a = str(i) + 'th_shape' + str(j*12) + 'rot_' + str(k) + 'squish' + str(l) + 'blur.png'
-                    cv2.imwrite(a, new_new_img)
+                    cv2.imwrite(a, final)
 
                 
         os.chdir('..')
