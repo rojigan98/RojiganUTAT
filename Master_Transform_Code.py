@@ -219,6 +219,7 @@ if __name__ == '__main__':
     res = [] 
     #NUMCLASSES + 1
     for i in range(NUMCLASSES + 1):
+        #NUMUNIQUE + 1
         for p in range(NUMUNIQUE + 1):
             img = cv2.imread(str(i) + '_' + str(p) + '.png', cv2.IMREAD_COLOR)
             final = img
@@ -250,7 +251,7 @@ if __name__ == '__main__':
                             new_new_img = addnoise(new_new_img, KERNEL_1)
                         
                         final = cv2.cvtColor(new_new_img, cv2.COLOR_BGR2GRAY)
-                        final_f = final.flatten
+                        final_f = final.flatten()
                         
                         res.append(final_f)
                         # a = str(i) + '_' + str(p) 'shape' + str(j*12) + 'rot_' + str(k) + 'squish' + str(l) + 'blur.png'
